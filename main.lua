@@ -1,5 +1,6 @@
-require("player");
-require("coin");
+require("player")
+require("callbacks")
+require("coin")
 
 function lerp(a, b, amount)
     local result = a + amount * (b - a)
@@ -12,33 +13,6 @@ function slerp(a, b, amount)
 end
 
 function init(windowWidth, windowHeight)
-
-    callbacks = {}
-    function callbacks.beginContact(a, b, collision)
-      local au = a:getUserData()
-      local bu = b:getUserData()
-      if au and au.beginContact then au:beginContact(bu) end
-      if bu and bu.beginContact then bu:beginContact(au) end
-    end
-
-    function callbacks.endContact(a, b, collision)
-      local au = a:getUserData()
-      local bu = b:getUserData()
-      if au and au.endContact then au:endContact(bu) end
-      if bu and bu.endContact then bu:endContact(au) end
-    end
-
-    function callbacks.preSolve(a, b, collision)
-      local au = a:getUserData()
-      local bu = b:getUserData()
-      if au and au.preSolve then au:preSolve(bu) end
-      if bu and bu.preSolve then bu:preSolve(au) end
-    end
-
-    function callbacks.postSolve(a, b, collision, normalImpulse, tangentImpulse)
-
-    end
-
     -- init main stuff
     world = {};
 
@@ -47,7 +21,11 @@ function init(windowWidth, windowHeight)
     world.world = love.physics.newWorld(0, world.gravity * world.meter, true);
                   love.physics.setMeter(world.meter);
 
-    world.world:setCallbacks(callbacks.beginContact, callbacks.endContact, callbacks.preSolve, callbacks.postSolve)
+    world.world:setCallbacks(
+        callbacks.beginContact,
+        callbacks.endContact,
+        callbacks.preSolve,
+        callbacks.postSolve)
 
     world.screen = {};
     world.screen.width  = windowWidth or 320;
@@ -129,20 +107,18 @@ function drawWave(obj)
 end
 
 function nextCoinHeight()
-    local result = wave[1]
     if #wave == 1 then
         local next = world.screen.height/2 + math.random(-world.screen.height/3, world.screen.height/3)
         for i=1,10 do
           table.insert(wave, lerp(wave[1], next, i/10))
         end
     end
-    table.remove(wave, 1)
-    return result
+    return table.remove(wave, 1)
 end
 
 function love.load()
     init(800, 600);
-    
+
     Player:new(world.screen.x1 + 32, world.screen.y2 - 40);
 
     table.insert(objects.blocks, newBlock(world.screen.x1,
