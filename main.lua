@@ -1,5 +1,6 @@
 require("player");
 require("coin");
+require("face");
 
 function lerp(a, b, amount)
     local result = a + amount * (b - a)
@@ -144,6 +145,8 @@ function love.load()
     init(800, 600);
     
     Player:new(world.screen.x1 + 32, world.screen.y2 - 40);
+
+    Face:new();
 
     table.insert(objects.blocks, newBlock(world.screen.x1,
                                           world.screen.y1,
