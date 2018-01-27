@@ -30,7 +30,10 @@ Coin = {}
   end
 
   function Coin:beginContact(other)
-      if other == objects.player then
+      if other == objects.goal then
+          currentState = state.gameOver
+      end
+      if other == objects.player or other == objects.goal then
         self.body:destroy()
         for key, value in pairs(objects.drawable) do
           if value == self then
@@ -38,10 +41,5 @@ Coin = {}
               break
             end
         end
-        break
-      end
-      if other == objects.goal then
-          currentState = state.gameOver
-          break
       end
   end
