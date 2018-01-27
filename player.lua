@@ -44,6 +44,7 @@ function Player:draw()
     local x, y = self.body:getPosition();
     love.graphics.setColor(193, 47, 14);
     love.graphics.circle("fill", x, y, self.radius);
+    love.graphics.setColor(255, 255, 255);
 end
 
 function Player:update()
