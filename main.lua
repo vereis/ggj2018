@@ -9,6 +9,11 @@ function lerp(a, b, amount)
     return result
 end
 
+function slerp(a, b, amount)
+    local factor = (0.5 - math.cos(math.pi * amount) * 0.5);
+    return a * (1.0 - factor) + b * factor
+end
+
 function init(windowWidth, windowHeight)
     state = {}
       state.begin = 0x01
@@ -42,8 +47,9 @@ function init(windowWidth, windowHeight)
     objects.blocks  = {};
     objects.hazards = {};
     objects.points  = {};
-    objects.player  = {};
     objects.drawable = {}
+    objects.player  = Player:new()
+    objects.face    = Face:new()
 
     objects.goal = newBlock(-20 - Coin.radius, 20, -10 - Coin.radius, world.screen.height - 20, {255,255,255}, "dynamic")
     objects.goal.body:setGravityScale(0) -- Needs to be dynamic to collide with sensors.
@@ -66,19 +72,19 @@ function newBlock(x1, y1, x2, y2, color, type)
     color   = color or {255, 255, 255};
     type = type or "static"
 
-    local block   = {};
-    local width   = math.abs(x1 - x2);
-    local height  = math.abs(y1 - y2);
+    local block = {};
+    local width = math.abs(x1 - x2);
+    local height = math.abs(y1 - y2);
     local midX = (x1 + x2) / 2;
     local midY = (y1 + y2) / 2;
 
-    block.body    = love.physics.newBody(world.world, midX, midY, type);
-    block.shape   = love.physics.newRectangleShape(width, height);
+    block.body  = love.physics.newBody(world.world, midX, midY, type);
+    block.shape = love.physics.newRectangleShape(width, height);
     block.fixture = love.physics.newFixture(block.body, block.shape);
 
     block.fixture:setUserData(block)
 
-    block.color   = {};
+    block.color = {};
     block.color.r = color[1];
     block.color.g = color[2];
     block.color.b = color[3];
@@ -95,7 +101,7 @@ function drawBlocks()
 end
 
 function drawWave(obj)
-    local gap = 15
+    local gap = 10
     local xOffset = gap
     for i,v in ipairs(obj) do
         love.graphics.circle((i-1) % 10 == 0 and "fill" or "line", xOffset, v, 5)
@@ -114,9 +120,11 @@ function nextCoinHeight()
     local curr = table.remove(wave, 1)
     if #wave == 0 then
         local amplitude = world.screen.height * 0.4
-        local next = world.screen.height/2 + math.random(-amplitude, amplitude)
-        for i=1,10 do
-          table.insert(wave, lerp(curr, next, i/10))
+        for j=1,10 do
+          local next = world.screen.height/2 + math.random(-amplitude, amplitude)
+          for i=1,10 do
+            table.insert(wave, slerp(wave[#wave] or curr, next, i/10))
+          end
         end
     end
     return curr
@@ -124,9 +132,6 @@ end
 
 function love.load()
     init(800, 600);
-
-    Player:new();
-    Face:new();
 
     table.insert(objects.blocks, newBlock(world.screen.x1,
                                           world.screen.y1,
@@ -186,6 +191,6 @@ function love.draw()
         love.graphics.print("Game over! You lose.")
     end
 
-    love.graphics.setColor(0x00, 0xff, 0x00, 0xff)
-    drawWave(wave)
+    -- love.graphics.setColor(0x00, 0xff, 0x00, 0xff)
+    -- drawWave(wave)
 end

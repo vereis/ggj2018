@@ -4,6 +4,7 @@ Coin = {}
     Coin.metaTable.__index = Coin
 
   Coin.radius = 15
+  Coin.speed = -200
 
   function Coin:new(x, y)
 
@@ -16,7 +17,7 @@ Coin = {}
       instance.fixture:setSensor(true)
       instance.fixture:setUserData(instance)
 
-      instance.body:setLinearVelocity(-100, 0)
+      instance.body:setLinearVelocity(instance.speed, 0)
 
       table.insert(objects.drawable, instance)
 
@@ -31,7 +32,10 @@ Coin = {}
 
   function Coin:beginContact(other)
       if other == objects.goal then
-          currentState = state.gameOver
+          objects.face:decreaseMood()
+      end
+      if other == objects.player then
+          objects.face:increaseMood()
       end
       if other == objects.player or other == objects.goal then
         self.body:destroy()
