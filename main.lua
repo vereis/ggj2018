@@ -9,8 +9,12 @@ function lerp(a, b, amount)
     return result
 end
 
-function init(windowWidth, windowHeight)
+function slerp(a, b, amount)
+    local factor = (0.5 - math.cos(math.pi * amount) * 0.5);
+    return a * (1.0 - factor) + b * factor
+end
 
+function init(windowWidth, windowHeight)
     state = {}
       state.begin = 0x01
       state.inProgress = 0x02
@@ -18,9 +22,7 @@ function init(windowWidth, windowHeight)
 
     currentState = state.begin
 
-    -- init main stuff
     world = {};
-
     world.meter = 64;
     world.gravity = 11;
     world.world = love.physics.newWorld(0, world.gravity * world.meter, true);
@@ -45,16 +47,23 @@ function init(windowWidth, windowHeight)
     objects.blocks  = {};
     objects.hazards = {};
     objects.points  = {};
-    objects.player  = {};
     objects.drawable = {}
+    objects.player  = Player:new()
+    objects.face    = Face:new()
+
+    objects.goal = newBlock(-20 - Coin.radius, 20, -10 - Coin.radius, world.screen.height - 20, {255,255,255}, "dynamic")
+    objects.goal.body:setGravityScale(0) -- Needs to be dynamic to collide with sensors.
+    table.insert(objects.blocks, objects.goal)
 
     wave = {}
     table.insert(wave, world.screen.height / 2)
 
-    Coin:new(world.screen.width, world.screen.height / 2)
-
     --initial graphics setup
     love.window.setMode(world.screen.width, world.screen.height);
+
+    coinFactory = {}
+    coinFactory.coinFrequency = 1
+    coinFactory.coinDelay = 0
 
     nextCoin = 0
 end
@@ -63,17 +72,19 @@ function newBlock(x1, y1, x2, y2, color, type)
     color   = color or {255, 255, 255};
     type = type or "static"
 
-    local block   = {};
-    local width   = math.abs(x1 - x2);
-    local height  = math.abs(y1 - y2);
+    local block = {};
+    local width = math.abs(x1 - x2);
+    local height = math.abs(y1 - y2);
     local midX = (x1 + x2) / 2;
     local midY = (y1 + y2) / 2;
 
-    block.body    = love.physics.newBody(world.world, midX, midY, type);
-    block.shape   = love.physics.newRectangleShape(width, height);
+    block.body  = love.physics.newBody(world.world, midX, midY, type);
+    block.shape = love.physics.newRectangleShape(width, height);
     block.fixture = love.physics.newFixture(block.body, block.shape);
 
-    block.color   = {};
+    block.fixture:setUserData(block)
+
+    block.color = {};
     block.color.r = color[1];
     block.color.g = color[2];
     block.color.b = color[3];
@@ -90,7 +101,7 @@ function drawBlocks()
 end
 
 function drawWave(obj)
-    local gap = 15
+    local gap = 10
     local xOffset = gap
     for i,v in ipairs(obj) do
         love.graphics.circle((i-1) % 10 == 0 and "fill" or "line", xOffset, v, 5)
@@ -106,28 +117,28 @@ function drawWave(obj)
 end
 
 function nextCoinHeight()
-    if #wave == 1 then
+    local curr = table.remove(wave, 1)
+    if #wave == 0 then
         local amplitude = world.screen.height * 0.4
-        local next = world.screen.height/2 + math.random(-amplitude, amplitude)
-        for i=1,10 do
-          table.insert(wave, lerp(wave[1], next, i/10))
+        for j=1,10 do
+          local next = world.screen.height/2 + math.random(-amplitude, amplitude)
+          for i=1,10 do
+            table.insert(wave, slerp(wave[#wave] or curr, next, i/10))
+          end
         end
     end
-    return table.remove(wave, 1)
+    return curr
 end
 
 function love.load()
     init(800, 600);
-
-    Player:new();
-
-    Face:new();
 
     table.insert(objects.blocks, newBlock(world.screen.x1,
                                           world.screen.y1,
                                           world.screen.x2,
                                           world.screen.y1 + 16,
                                           {0, 255, 0}));
+
     table.insert(objects.blocks, newBlock(world.screen.x1,
                                           world.screen.y2,
                                           world.screen.x2,
@@ -149,21 +160,22 @@ function love.update(dt)
     end
 
     if currentState == state.inProgress then
+        coinFactory.coinDelay = coinFactory.coinDelay + dt
+        if coinFactory.coinDelay >= coinFactory.coinFrequency then
+            Coin:new(world.screen.width + Coin.radius, nextCoinHeight())
+            coinFactory.coinDelay = 0
+        end
         world.world:update(dt)
         objects.player:update();
     end
 
     if currentState == state.gameOver then
-        if love.keyboard.isDown("space") then
-            currentState = state.inProgress
-        end
+        -- Do nothing; player is stuck.
     end
 end
 
 function love.draw()
     drawBlocks()
-    -- love.graphics.setColor(0x00, 0xff, 0x00, 0xff)
-    -- drawWave(wave)
 
     love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
     for i,v in ipairs(objects.drawable) do
@@ -176,6 +188,9 @@ function love.draw()
         love.graphics.print("Press space to start.")
     end
     if currentState == state.gameOver then
-        love.graphics.print("Game over! Press space to restart.")
+        love.graphics.print("Game over! You lose.")
     end
+
+    -- love.graphics.setColor(0x00, 0xff, 0x00, 0xff)
+    -- drawWave(wave)
 end

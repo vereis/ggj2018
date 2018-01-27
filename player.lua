@@ -37,7 +37,6 @@ function Player:new(x, y)
     };
 
     table.insert(objects.drawable, instance);
-    objects.player = instance;
 
     return instance;
 end
