@@ -11,8 +11,10 @@ Player.force = -2400
 
 function Player:new(x, y)
     local instance = {};
-
     setmetatable(instance, self.metaTable);
+
+    x = x or instance.radius * 1.5
+    y = y or world.screen.height / 2
 
     instance.body = love.physics.newBody(world.world, x, y, "dynamic");
     instance.shape = love.physics.newCircleShape(instance.radius);
