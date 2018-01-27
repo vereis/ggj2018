@@ -14,7 +14,7 @@ function init(windowWidth, windowHeight)
     world.screen.x2     = world.screen.width;
     world.screen.y1     = 0;
     world.screen.y2     = world.screen.height;
-    
+
     -- init object pool
     objects = {};
     objects.blocks  = {};
@@ -26,9 +26,9 @@ function init(windowWidth, windowHeight)
     love.window.setMode(world.screen.width, world.screen.height);
 end
 
-function newBlock(x1, y1, x2, y2, color, canMove)
-    canMove = canMove == false or "dynamic";
+function newBlock(x1, y1, x2, y2, color, type)
     color   = color or {255, 255, 255};
+    type = type or "static"
 
     local block   = {};
     local width   = math.abs(x1 - x2);
@@ -36,10 +36,10 @@ function newBlock(x1, y1, x2, y2, color, canMove)
     local midX = (x1 + x2) / 2;
     local midY = (y1 + y2) / 2;
 
-    block.body    = love.physics.newBody(world.world, midX, midY, canMove);
+    block.body    = love.physics.newBody(world.world, midX, midY, type);
     block.shape   = love.physics.newRectangleShape(width, height);
     block.fixture = love.physics.newFixture(block.body, block.shape);
-    
+
     block.color   = {};
     block.color.r = color[1];
     block.color.g = color[2];
@@ -67,7 +67,7 @@ function spawnPlayer(x, y, r, state)
     objects.player.shape   = love.physics.newCircleShape(r);
     objects.player.fixture = love.physics.newFixture(objects.player.body, objects.player.shape, 1);
     objects.player.fixture:setRestitution(0.25);
-    
+
     objects.player.state   = state;
     objects.player.states  = {
         ["idle"] = function()
@@ -82,36 +82,36 @@ function spawnPlayer(x, y, r, state)
             end
         end
     };
-    
-    objects.player.update  = function() 
+
+    objects.player.update  = function()
         objects.player.states[objects.player.state]();
     end
 end
 
 function drawPlayer()
     love.graphics.setColor(193, 47, 14)
-    love.graphics.circle("fill", 
-                         objects.player.body:getX(), 
-                         objects.player.body:getY(), 
-                         objects.player.shape:getRadius());
+    love.graphics.circle("fill",
+        objects.player.body:getX(),
+        objects.player.body:getY(),
+        objects.player.shape:getRadius());
 end
 
 function love.load()
     init(480, 270);
     spawnPlayer(world.screen.x1 + 32, world.screen.y2 - 40);
 
-    table.insert(objects.blocks, newBlock(world.screen.x1, 
-                                          world.screen.y1, 
-                                          world.screen.x2, 
-                                          world.screen.y1 + 16, 
-                                          {0, 255, 0}));     
-    table.insert(objects.blocks, newBlock(world.screen.x1, 
-                                          world.screen.y2, 
-                                          world.screen.x2, 
-                                          world.screen.y2 - 16, 
-                                          {0, 255, 0}));    
+    table.insert(objects.blocks, newBlock(world.screen.x1,
+                                          world.screen.y1,
+                                          world.screen.x2,
+                                          world.screen.y1 + 16,
+                                          {0, 255, 0}));
+    table.insert(objects.blocks, newBlock(world.screen.x1,
+                                          world.screen.y2,
+                                          world.screen.x2,
+                                          world.screen.y2 - 16,
+                                          {0, 255, 0}));
 end
-      
+
 function love.update(dt)
     world.world:update(dt)
     objects.player.update();
