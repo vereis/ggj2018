@@ -7,6 +7,7 @@ Player.radius = 30;
 
 Player.states = {};
 Player.state = "idle";
+Player.force = -2400
 
 function Player:new(x, y)
     local instance = {};
@@ -26,7 +27,7 @@ function Player:new(x, y)
             end
         end,
         ["jetpack"] = function()
-            instance.body:applyForce(0, -1000);
+            instance.body:applyForce(0, instance.force);
             if not love.keyboard.isDown("space") then
                 instance.state = "idle";
             end
