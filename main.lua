@@ -1,4 +1,42 @@
+require("coin")
+
+function linearInterpolation(a, b, amount)
+    local result = a + amount * (b - a)
+    return result
+end
+
+function interpolate(a, b, amount)
+    return linearInterpolation(a, b, amount)
+end
+
 function init(windowWidth, windowHeight)
+
+    callbacks = {}
+    function callbacks.beginContact(a, b, collision)
+      local au = a:getUserData()
+      local bu = b:getUserData()
+      if au and au.beginContact then au:beginContact(bu) end
+      if bu and bu.beginContact then bu:beginContact(au) end
+    end
+
+    function callbacks.endContact(a, b, collision)
+      local au = a:getUserData()
+      local bu = b:getUserData()
+      if au and au.endContact then au:endContact(bu) end
+      if bu and bu.endContact then bu:endContact(au) end
+    end
+
+    function callbacks.preSolve(a, b, collision)
+      local au = a:getUserData()
+      local bu = b:getUserData()
+      if au and au.preSolve then au:preSolve(bu) end
+      if bu and bu.preSolve then bu:preSolve(au) end
+    end
+
+    function callbacks.postSolve(a, b, collision, normalImpulse, tangentImpulse)
+
+    end
+
     -- init main stuff
     world = {};
 
@@ -6,6 +44,8 @@ function init(windowWidth, windowHeight)
     world.gravity = 9;
     world.world = love.physics.newWorld(0, world.gravity * world.meter, true);
                   love.physics.setMeter(world.meter);
+
+    world.world:setCallbacks(callbacks.beginContact, callbacks.endContact, callbacks.preSolve, callbacks.postSolve)
 
     world.screen = {};
     world.screen.width  = windowWidth or 320;
@@ -21,9 +61,28 @@ function init(windowWidth, windowHeight)
     objects.hazards = {};
     objects.points  = {};
     objects.player  = {};
+    objects.drawable = {}
+
+    Coin:new(world.screen.width, world.screen.height / 2)
+
+    --preliminary height code (hh)
+    local rawHeights = {}
+    for i=1,14 do
+        table.insert(rawHeights, math.random(0, world.screen.height))
+    end
+    wave = {}
+    for i=1,13 do
+        local a = rawHeights[i + 0]
+        local b = rawHeights[i + 1]
+        for j=0,9 do
+          table.insert(wave, linearInterpolation(a, b, j/10))
+        end
+    end
 
     --initial graphics setup
     love.window.setMode(world.screen.width, world.screen.height);
+
+    nextCoin = 0
 end
 
 function newBlock(x1, y1, x2, y2, color, type)
@@ -67,6 +126,7 @@ function spawnPlayer(x, y, r, state)
     objects.player.shape   = love.physics.newCircleShape(r);
     objects.player.fixture = love.physics.newFixture(objects.player.body, objects.player.shape, 1);
     objects.player.fixture:setRestitution(0.25);
+    objects.player.fixture:setUserData(objects.player);
 
     objects.player.state   = state;
     objects.player.states  = {
@@ -96,8 +156,24 @@ function drawPlayer()
         objects.player.shape:getRadius());
 end
 
+function drawWave(obj)
+    local gap = 15
+    local xOffset = gap
+    for i,v in ipairs(obj) do
+        love.graphics.circle((i-1) % 10 == 0 and "fill" or "line", xOffset, v, 5)
+        xOffset = xOffset + gap
+    end
+    xOffset = gap
+    for i=1,#obj-1 do
+        local curr=obj[i+0]
+        local next=obj[i+1]
+        love.graphics.line(xOffset, curr, xOffset+gap, next)
+        xOffset = xOffset + gap
+    end
+end
+
 function love.load()
-    init(480, 270);
+    init(800, 600);
     spawnPlayer(world.screen.x1 + 32, world.screen.y2 - 40);
 
     table.insert(objects.blocks, newBlock(world.screen.x1,
@@ -112,12 +188,26 @@ function love.load()
                                           {0, 255, 0}));
 end
 
+time=0
 function love.update(dt)
+    time = time + dt
+    nextCoin = nextCoin + dt
+    if nextCoin > 0.35 then
+      Coin:new(800, 300 + math.sin(time) * 150)
+      nextCoin = 0
+    end
     world.world:update(dt)
     objects.player.update();
 end
 
 function love.draw()
-    drawBlocks();
-    drawPlayer();
+    drawBlocks()
+    drawPlayer()
+    love.graphics.setColor(0, 255, 0, 255)
+    drawWave(wave)
+    love.graphics.setColor(255, 255, 255, 255)
+
+    for i,v in ipairs(objects.drawable) do
+      v:draw()
+    end
 end
