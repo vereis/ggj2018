@@ -133,17 +133,23 @@ end
 function love.load()
     init(800, 600);
 
+    background = love.graphics.newImage("assets/images/background.png")
+
+    font = {}
+    font.large = love.graphics.newFont("assets/fonts/NanumGothic-Regular.ttf", 64)
+    love.graphics.setFont(font.large)
+
     table.insert(objects.blocks, newBlock(world.screen.x1,
                                           world.screen.y1,
                                           world.screen.x2,
                                           world.screen.y1 + 16,
-                                          {0, 255, 0}));
+                                          {0x00, 0x00, 0x00}));
 
     table.insert(objects.blocks, newBlock(world.screen.x1,
                                           world.screen.y2,
                                           world.screen.x2,
                                           world.screen.y2 - 16,
-                                          {0, 255, 0}));
+                                          {0x00, 0x00, 0x00}));
 end
 
 
@@ -176,21 +182,27 @@ function love.update(dt)
     end
 end
 
+function textCenetered(text, font, yOffset)
+    local xOffset = font:getWidth(text)
+    love.graphics.setFont(font)
+    love.graphics.print(text, world.screen.width / 2 - xOffset / 2, yOffset)
+end
+
 function love.draw()
+    love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
+    love.graphics.draw(background)
     drawBlocks()
 
-    love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
     for i,v in ipairs(objects.drawable) do
         v:draw()
     end
 
-    love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
-
+    love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
     if currentState == state.begin then
-        love.graphics.print("Press space to start.")
+        textCenetered("Press space to start.", font.large, 12)
     end
     if currentState == state.gameOver then
-        love.graphics.print("Game over! You lose.")
+        textCenetered("Game over! You lose.", font.large, 12)
     end
 
     -- love.graphics.setColor(0x00, 0xff, 0x00, 0xff)

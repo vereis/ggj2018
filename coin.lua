@@ -6,6 +6,8 @@ Coin = {}
   Coin.radius = 15
   Coin.speed = -200
 
+  Coin.colour = {0xff, 0x00, 0x00}
+
   function Coin:new(x, y)
 
     local instance = {}
@@ -26,7 +28,7 @@ Coin = {}
 
   function Coin:draw()
       local x, y = self.body:getPosition()
-      love.graphics.setColor(0xff, 0xff, 0x00, 0xff)
+      love.graphics.setColor(self.colour[1], self.colour[2], self.colour[3], 0xff)
       love.graphics.circle("fill", x, y, self.radius)
   end
 

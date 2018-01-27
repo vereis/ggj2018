@@ -1,18 +1,27 @@
 Face = {};
 Face.metaTable = {};
 Face.metaTable.__index = Face;
-Face.mood = 7
+Face.mood = 5
 Face.time = 0
 Face.frame = 0
 Face.frameDuration = 0.33 -- In seconds.
 
 Face.graphics = {}
-Face.graphics.great = { love.graphics.newImage("assets/images/face_amazing.png") }
-Face.graphics.good = {
-    love.graphics.newImage("assets/3a.png"),
-    love.graphics.newImage("assets/3b.png")
+Face.graphics.great = {
+   love.graphics.newImage("assets/images/face_amazing.png")
+    --love.graphics.newImage("assets/5a.png"),
+    --love.graphics.newImage("assets/5b.png")
 }
-Face.graphics.ok = { love.graphics.newImage("assets/images/face_okay.png") }
+Face.graphics.good = {
+   love.graphics.newImage("assets/images/face_happy.png")
+     --love.graphics.newImage("assets/4a.png"),
+     --love.graphics.newImage("assets/4b.png")
+}
+Face.graphics.ok = {
+   love.graphics.newImage("assets/images/face_okay.png")
+    --love.graphics.newImage("assets/3a.png"),
+    --love.graphics.newImage("assets/3b.png")
+}
 Face.graphics.default = { love.graphics.newImage("assets/images/face_normal.png") }
 Face.graphics.meh = { love.graphics.newImage("assets/images/face_meh.png") }
 Face.graphics.bad = { love.graphics.newImage("assets/images/face_sad.png") }
