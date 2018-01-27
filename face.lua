@@ -4,13 +4,13 @@ Face.metaTable.__index = Face;
 Face.mood = 7
 
 Face.graphics = {}
-Face.graphics.great = love.graphics.newImage("assets/face_amazing.png")
-Face.graphics.good = love.graphics.newImage("assets/face_happy.png")
-Face.graphics.ok = love.graphics.newImage("assets/face_okay.png")
-Face.graphics.default = love.graphics.newImage("assets/face_normal.png")
-Face.graphics.meh = love.graphics.newImage("assets/face_meh.png")
-Face.graphics.bad = love.graphics.newImage("assets/face_sad.png")
-Face.graphics.crap = love.graphics.newImage("assets/face_horrible.png")
+Face.graphics.great = love.graphics.newImage("assets/images/face_amazing.png")
+Face.graphics.good = love.graphics.newImage("assets/images/face_happy.png")
+Face.graphics.ok = love.graphics.newImage("assets/images/face_okay.png")
+Face.graphics.default = love.graphics.newImage("assets/images/face_normal.png")
+Face.graphics.meh = love.graphics.newImage("assets/images/face_meh.png")
+Face.graphics.bad = love.graphics.newImage("assets/images/face_sad.png")
+Face.graphics.crap = love.graphics.newImage("assets/images/face_horrible.png")
 
 function Face:new()
     local instance = {};
