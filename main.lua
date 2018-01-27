@@ -154,9 +154,7 @@ function love.update(dt)
     end
 
     if currentState == state.gameOver then
-        if love.keyboard.isDown("space") then
-            currentState = state.inProgress
-        end
+        -- Do nothing; player is stuck.
     end
 end
 
@@ -176,6 +174,6 @@ function love.draw()
         love.graphics.print("Press space to start.")
     end
     if currentState == state.gameOver then
-        love.graphics.print("Game over! Press space to restart.")
+        love.graphics.print("Game over! You lose.")
     end
 end

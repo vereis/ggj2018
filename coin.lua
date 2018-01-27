@@ -38,5 +38,10 @@ Coin = {}
               break
             end
         end
+        break
+      end
+      if other == objects.goal then
+          currentState = state.gameOver
+          break
       end
   end
