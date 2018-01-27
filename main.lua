@@ -1,12 +1,13 @@
 require("coin")
 
-function linearInterpolation(a, b, amount)
+function lerp(a, b, amount)
     local result = a + amount * (b - a)
     return result
 end
 
-function interpolate(a, b, amount)
-    return linearInterpolation(a, b, amount)
+function slerp(a, b, amount)
+    local result = a + math.sin(amount*(math.pi/2)) * (b - a)
+    return result
 end
 
 function init(windowWidth, windowHeight)
@@ -41,7 +42,7 @@ function init(windowWidth, windowHeight)
     world = {};
 
     world.meter = 64;
-    world.gravity = 9;
+    world.gravity = 11;
     world.world = love.physics.newWorld(0, world.gravity * world.meter, true);
                   love.physics.setMeter(world.meter);
 
@@ -70,14 +71,9 @@ function init(windowWidth, windowHeight)
     for i=1,14 do
         table.insert(rawHeights, math.random(0, world.screen.height))
     end
+
     wave = {}
-    for i=1,13 do
-        local a = rawHeights[i + 0]
-        local b = rawHeights[i + 1]
-        for j=0,9 do
-          table.insert(wave, linearInterpolation(a, b, j/10))
-        end
-    end
+    table.insert(wave, world.screen.height / 2)
 
     --initial graphics setup
     love.window.setMode(world.screen.width, world.screen.height);
@@ -118,7 +114,7 @@ end
 function spawnPlayer(x, y, r, state)
     x = x or 0;
     y = y or 0;
-    r = r or 14;
+    r = r or 30;
     state = state or "idle";
 
     objects.player = {};
@@ -136,7 +132,7 @@ function spawnPlayer(x, y, r, state)
             end
         end,
         ["jetpack"] = function()
-            objects.player.body:applyForce(0, -350);
+            objects.player.body:applyForce(0, -2400);
             if not love.keyboard.isDown("space") then
                 objects.player.state = "idle";
             end
@@ -172,6 +168,18 @@ function drawWave(obj)
     end
 end
 
+function nextCoinHeight()
+    local result = wave[1]
+    if #wave == 1 then
+        local next = world.screen.height/2 + math.random(-world.screen.height/3, world.screen.height/3)
+        for i=1,10 do
+          table.insert(wave, lerp(wave[1], next, i/10))
+        end
+    end
+    table.remove(wave, 1)
+    return result
+end
+
 function love.load()
     init(800, 600);
     spawnPlayer(world.screen.x1 + 32, world.screen.y2 - 40);
@@ -193,7 +201,7 @@ function love.update(dt)
     time = time + dt
     nextCoin = nextCoin + dt
     if nextCoin > 0.35 then
-      Coin:new(800, 300 + math.sin(time) * 150)
+      Coin:new(800, nextCoinHeight())
       nextCoin = 0
     end
     world.world:update(dt)
@@ -203,9 +211,9 @@ end
 function love.draw()
     drawBlocks()
     drawPlayer()
-    love.graphics.setColor(0, 255, 0, 255)
+    love.graphics.setColor(0x00, 0xff, 0x00, 0xff)
     drawWave(wave)
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
 
     for i,v in ipairs(objects.drawable) do
       v:draw()
