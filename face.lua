@@ -10,27 +10,36 @@ function Face:new()
 
     setmetatable(instance, self.metaTable);
 
+    instance.graphics = {}
+    instance.graphics.great = love.graphics.newImage("assets/face_amazing.png")
+    instance.graphics.good = love.graphics.newImage("assets/face_happy.png")
+    instance.graphics.ok = love.graphics.newImage("assets/face_okay.png")
+    instance.graphics.default = love.graphics.newImage("assets/face_normal.png")
+    instance.graphics.meh = love.graphics.newImage("assets/face_meh.png")
+    instance.graphics.bad = love.graphics.newImage("assets/face_sad.png")
+    instance.graphics.crap = love.graphics.newImage("assets/face_horrible.png")
+
     instance.states = {
         ["great"] = function()
-            instance.graphic = love.graphics.newImage("assets/face_amazing.png");
+            instance.graphic = instance.graphics.great
         end,
         ["good"] = function()
-            instance.graphic = love.graphics.newImage("assets/face_happy.png");
+            instance.graphic = instance.graphics.good
         end,
         ["ok"] = function()
-            instance.graphic = love.graphics.newImage("assets/face_okay.png");
+            instance.graphic = instance.graphics.ok
         end,
         ["default"] = function()
-            instance.graphic = love.graphics.newImage("assets/face_normal.png");
+            instance.graphic = instance.graphics.default
         end,
         ["meh"] = function()
-            instance.graphic = love.graphics.newImage("assets/face_meh.png");
+            instance.graphic = instance.graphics.meh
         end,
         ["bad"] = function()
-            instance.graphic = love.graphics.newImage("assets/face_sad.png");
+            instance.graphic = instance.graphics.bad
         end,
         ["crap"] = function()
-            instance.graphic = love.graphics.newImage("assets/face_horrible.png");
+            instance.graphic = instance.graphics.crap
         end,
     };
 
