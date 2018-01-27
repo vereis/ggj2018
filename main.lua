@@ -153,6 +153,8 @@ function love.update(dt)
     --  nextCoin = 0
     --end
 
+    objects.face:update(dt)
+
     if currentState == state.begin then
         if love.keyboard.isDown("space") then
             currentState = state.inProgress

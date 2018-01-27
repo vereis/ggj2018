@@ -2,15 +2,21 @@ Face = {};
 Face.metaTable = {};
 Face.metaTable.__index = Face;
 Face.mood = 7
+Face.time = 0
+Face.frame = 0
+Face.frameDuration = 0.33 -- In seconds.
 
 Face.graphics = {}
-Face.graphics.great = love.graphics.newImage("assets/images/face_amazing.png")
-Face.graphics.good = love.graphics.newImage("assets/images/face_happy.png")
-Face.graphics.ok = love.graphics.newImage("assets/images/face_okay.png")
-Face.graphics.default = love.graphics.newImage("assets/images/face_normal.png")
-Face.graphics.meh = love.graphics.newImage("assets/images/face_meh.png")
-Face.graphics.bad = love.graphics.newImage("assets/images/face_sad.png")
-Face.graphics.crap = love.graphics.newImage("assets/images/face_horrible.png")
+Face.graphics.great = { love.graphics.newImage("assets/images/face_amazing.png") }
+Face.graphics.good = {
+    love.graphics.newImage("assets/3a.png"),
+    love.graphics.newImage("assets/3b.png")
+}
+Face.graphics.ok = { love.graphics.newImage("assets/images/face_okay.png") }
+Face.graphics.default = { love.graphics.newImage("assets/images/face_normal.png") }
+Face.graphics.meh = { love.graphics.newImage("assets/images/face_meh.png") }
+Face.graphics.bad = { love.graphics.newImage("assets/images/face_sad.png") }
+Face.graphics.crap = { love.graphics.newImage("assets/images/face_horrible.png") }
 
 function Face:new()
     local instance = {};
@@ -21,10 +27,11 @@ function Face:new()
 end
 
 function Face:draw()
+    local graphic = self.graphic[self.frame + 1]
     local screenCenter = {world.screen.width/2, world.screen.height/2};
-    local imageCenter  = {self.graphic:getWidth()/2, self.graphic:getHeight()/2};
+    local imageCenter  = {graphic:getWidth()/2, graphic:getHeight()/2};
 
-    love.graphics.draw(self.graphic, screenCenter[1] - imageCenter[1], screenCenter[2] - imageCenter[2]);
+    love.graphics.draw(graphic, screenCenter[1] - imageCenter[1], screenCenter[2] - imageCenter[2]);
 end
 
 function Face:decreaseMood()
@@ -42,7 +49,7 @@ function Face:increaseMood()
     end
 end
 
-function Face:updateFace()
+function Face:updateFace(dt)
     if self.mood == 7 then
       self.graphic = self.graphics.great
     end
@@ -64,4 +71,10 @@ function Face:updateFace()
     if self.mood == 1 then
       self.graphic = self.graphics.crap
     end
+    self.frame = 0
+end
+
+function Face:update(dt)
+    self.time = self.time + dt / self.frameDuration
+    self.frame = math.floor(self.time) % #self.graphic
 end
