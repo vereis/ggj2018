@@ -1,4 +1,5 @@
-require("coin")
+require("player");
+require("coin");
 
 function lerp(a, b, amount)
     local result = a + amount * (b - a)
@@ -111,47 +112,6 @@ function drawBlocks()
     end);
 end
 
-function spawnPlayer(x, y, r, state)
-    x = x or 0;
-    y = y or 0;
-    r = r or 30;
-    state = state or "idle";
-
-    objects.player = {};
-    objects.player.body    = love.physics.newBody(world.world, x + r, y - r, "dynamic");
-    objects.player.shape   = love.physics.newCircleShape(r);
-    objects.player.fixture = love.physics.newFixture(objects.player.body, objects.player.shape, 1);
-    objects.player.fixture:setRestitution(0.25);
-    objects.player.fixture:setUserData(objects.player);
-
-    objects.player.state   = state;
-    objects.player.states  = {
-        ["idle"] = function()
-            if love.keyboard.isDown("space") then
-                objects.player.state = "jetpack";
-            end
-        end,
-        ["jetpack"] = function()
-            objects.player.body:applyForce(0, -2400);
-            if not love.keyboard.isDown("space") then
-                objects.player.state = "idle";
-            end
-        end
-    };
-
-    objects.player.update  = function()
-        objects.player.states[objects.player.state]();
-    end
-end
-
-function drawPlayer()
-    love.graphics.setColor(193, 47, 14)
-    love.graphics.circle("fill",
-        objects.player.body:getX(),
-        objects.player.body:getY(),
-        objects.player.shape:getRadius());
-end
-
 function drawWave(obj)
     local gap = 15
     local xOffset = gap
@@ -182,7 +142,8 @@ end
 
 function love.load()
     init(800, 600);
-    spawnPlayer(world.screen.x1 + 32, world.screen.y2 - 40);
+    
+    Player:new(world.screen.x1 + 32, world.screen.y2 - 40);
 
     table.insert(objects.blocks, newBlock(world.screen.x1,
                                           world.screen.y1,
@@ -205,12 +166,12 @@ function love.update(dt)
       nextCoin = 0
     end
     world.world:update(dt)
-    objects.player.update();
+
+    objects.player:update();
 end
 
 function love.draw()
     drawBlocks()
-    drawPlayer()
     love.graphics.setColor(0x00, 0xff, 0x00, 0xff)
     drawWave(wave)
     love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
