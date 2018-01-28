@@ -222,12 +222,16 @@ function love.draw()
 
     love.graphics.setFont(font.small)
     love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
+
     if currentState == state.inProgress or currentState == state.gameOver then
-        love.graphics.print("Score: " .. score)
+        love.graphics.print("Score: " .. score, 12, 12 * 1)
+        love.graphics.print("Mood: " .. objects.face.mood, 12, 12 * 2)
     end
+
     if currentState == state.begin then
         textCenetered("Press space to start.", font.large, 12)
     end
+
     if currentState == state.gameOver then
         textCenetered("Game over! You lose.", font.large, 12)
     end
