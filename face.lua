@@ -7,23 +7,34 @@ Face.frame = 0
 Face.frameDuration = 0.33 -- In seconds.
 
 Face.graphics = {}
-Face.graphics.great = {
-   love.graphics.newImage("assets/images/face_amazing.png")
-    --love.graphics.newImage("assets/5a.png"),
-    --love.graphics.newImage("assets/5b.png")
+Face.graphics.great = { 
+    love.graphics.newImage("assets/5c.jpg"), 
+    love.graphics.newImage("assets/5d.jpg"), 
+    love.graphics.newImage("assets/5e.jpg"), 
+    love.graphics.newImage("assets/5f.jpg"), 
+    
 }
 Face.graphics.good = {
-   love.graphics.newImage("assets/images/face_happy.png")
-     --love.graphics.newImage("assets/4a.png"),
-     --love.graphics.newImage("assets/4b.png")
+    love.graphics.newImage("assets/4a.jpg"),
+    love.graphics.newImage("assets/4b.jpg")
 }
-Face.graphics.ok = {
-   love.graphics.newImage("assets/images/face_okay.png")
-    --love.graphics.newImage("assets/3a.png"),
-    --love.graphics.newImage("assets/3b.png")
+Face.graphics.ok = { 
+    love.graphics.newImage("assets/3a.jpg"),
+    love.graphics.newImage("assets/3b.jpg"),
+    love.graphics.newImage("assets/3c.jpg") 
+    
 }
-Face.graphics.default = { love.graphics.newImage("assets/images/face_normal.png") }
-Face.graphics.meh = { love.graphics.newImage("assets/images/face_meh.png") }
+Face.graphics.default = { 
+    love.graphics.newImage("assets/2a.jpg"),
+    love.graphics.newImage("assets/2a.jpg"), 
+    love.graphics.newImage("assets/2a.jpg")     
+}
+Face.graphics.meh = { 
+    love.graphics.newImage("assets/1b.jpg"),
+    love.graphics.newImage("assets/1c.jpg"),
+    love.graphics.newImage("assets/1d.jpg"), 
+    love.graphics.newImage("assets/1e.jpg") 
+}
 Face.graphics.bad = { love.graphics.newImage("assets/images/face_sad.png") }
 Face.graphics.crap = { love.graphics.newImage("assets/images/face_horrible.png") }
 
