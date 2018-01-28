@@ -47,7 +47,6 @@ end
 
 function Face:draw()
 
-
     local graphic = self.graphic[self.frame + 1]
     local screenCenter = {world.screen.width/2, world.screen.height/2};
     local imageCenter  = {graphic:getWidth()/2, graphic:getHeight()/2};

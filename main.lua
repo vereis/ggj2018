@@ -18,6 +18,27 @@ function init(windowWidth, windowHeight)
         music[4] = love.audio.newSource("assets/music/Music_Layer_4.wav", "static")
         music[5] = love.audio.newSource("assets/music/Music_Layer_5.wav", "static")
 
+    coin = {}
+    coin.pickup = {}
+        coin.pickup[1] = love.audio.newSource("assets/music/Coin_PickUp_1.wav", "static")
+        coin.pickup[2] = love.audio.newSource("assets/music/Coin_PickUp_2.wav", "static")
+        coin.pickup[3] = love.audio.newSource("assets/music/Coin_PickUp_3.wav", "static")
+        coin.pickup[4] = love.audio.newSource("assets/music/Coin_PickUp_4.wav", "static")
+    coin.miss = {}
+        coin.miss[1] = love.audio.newSource("assets/music/Coin_Miss_1.wav", "static")
+        coin.miss[2] = love.audio.newSource("assets/music/Coin_Miss_2.wav", "static")
+        coin.miss[3] = love.audio.newSource("assets/music/Coin_Miss_3.wav", "static")
+
+    graphics = {}
+        graphics.bar = {}
+        graphics.bar[1] = love.graphics.newImage("assets/bar/bar1.png")
+        graphics.bar[2] = love.graphics.newImage("assets/bar/bar2.png")
+        graphics.bar[3] = love.graphics.newImage("assets/bar/bar3.png")
+        graphics.bar[4] = love.graphics.newImage("assets/bar/bar4.png")
+        graphics.bar[5] = love.graphics.newImage("assets/bar/bar5.png")
+
+        graphics.titleScreen = love.graphics.newImage("assets/COVER PICTURE.png")
+
     currentState = state.begin
 
     timeStep = {}
@@ -221,14 +242,17 @@ function love.draw()
     end
 
     love.graphics.setFont(font.small)
-    love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
 
     if currentState == state.inProgress or currentState == state.gameOver then
+        love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
+        love.graphics.draw(graphics.bar[math.floor(objects.face.mood)] or graphics.bar[1], 540, 460)
+        love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
         love.graphics.print("Score: " .. score, 12, 12 * 1)
         love.graphics.print("Mood: " .. objects.face.mood, 12, 12 * 2)
     end
 
     if currentState == state.begin then
+        love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
         textCenetered("Press space to start.", font.large, 12)
     end
 
@@ -236,6 +260,6 @@ function love.draw()
         textCenetered("Game over! You lose.", font.large, 12)
     end
 
-    love.graphics.setColor(0x00, 0x00, 0xaa, 0xff)
-    drawWave(objects.wave.heights)
+    -- love.graphics.setColor(0x00, 0x00, 0xaa, 0xff)
+    -- drawWave(objects.wave.heights)
 end

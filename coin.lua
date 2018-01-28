@@ -35,9 +35,11 @@ Coin = {}
   function Coin:beginContact(other)
       if other == objects.goal then
           objects.face:decreaseMood()
+          coin.miss[love.math.random(1, #coin.miss)]:play()
       end
       if other == objects.player then
           objects.face:increaseMood()
+          coin.pickup[love.math.random(1, #coin.pickup)]:play()
       end
       if other == objects.player or other == objects.goal then
         self.body:destroy()
