@@ -3,10 +3,14 @@ Coin = {}
   Coin.metaTable = {}
     Coin.metaTable.__index = Coin
 
-  Coin.radius = 15
+  Coin.radius = 30
   Coin.speed = 200
 
   Coin.colour = {0xff, 0x00, 0x00}
+
+  Coin.apperances = {}
+  Coin.apperances[1] = love.graphics.newImage("assets/button1.png")
+  Coin.apperances[2] = love.graphics.newImage("assets/button2.png")
 
   function Coin:new(x, y)
 
@@ -18,6 +22,7 @@ Coin = {}
       instance.fixture = love.physics.newFixture(instance.body, instance.shape, 1)
       instance.fixture:setSensor(true)
       instance.fixture:setUserData(instance)
+      instance.apperance = instance.apperances[love.math.random(1, #instance.apperances)]
 
       instance.body:setLinearVelocity(-instance.speed, 0)
 
@@ -28,8 +33,7 @@ Coin = {}
 
   function Coin:draw()
       local x, y = self.body:getPosition()
-      love.graphics.setColor(self.colour[1], self.colour[2], self.colour[3], 0xff)
-      love.graphics.circle("fill", x, y, self.radius)
+      love.graphics.draw(self.apperance, x - self.radius, y - self.radius)
   end
 
   function Coin:beginContact(other)
