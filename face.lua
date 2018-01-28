@@ -1,47 +1,48 @@
 Face = {};
 Face.metaTable = {};
 Face.metaTable.__index = Face;
-Face.mood = 1
-Face.moodStep = 0.2
+Face.mood = 5
 Face.time = 0
 Face.frame = 0
 Face.frameDuration = 0.33 -- In seconds.
 
 Face.graphics = {}
-Face.graphics[5] = {
-    love.graphics.newImage("assets/5c.jpg"),
-    love.graphics.newImage("assets/5d.jpg"),
-    love.graphics.newImage("assets/5e.jpg"),
-    love.graphics.newImage("assets/5f.jpg"),
-
+Face.graphics.great = { 
+    love.graphics.newImage("assets/5c.jpg"), 
+    love.graphics.newImage("assets/5d.jpg"), 
+    love.graphics.newImage("assets/5e.jpg"), 
+    love.graphics.newImage("assets/5f.jpg"), 
+    
 }
-Face.graphics[4] = {
+Face.graphics.good = {
     love.graphics.newImage("assets/4a.jpg"),
     love.graphics.newImage("assets/4b.jpg")
 }
-Face.graphics[3] = {
+Face.graphics.ok = { 
     love.graphics.newImage("assets/3a.jpg"),
     love.graphics.newImage("assets/3b.jpg"),
-    love.graphics.newImage("assets/3c.jpg")
-
+    love.graphics.newImage("assets/3c.jpg") 
+    
 }
-Face.graphics[2] = {
+Face.graphics.default = { 
     love.graphics.newImage("assets/2a.jpg"),
-    love.graphics.newImage("assets/2a.jpg"),
-    love.graphics.newImage("assets/2a.jpg")
+    love.graphics.newImage("assets/2b.jpg"), 
+    love.graphics.newImage("assets/2c.jpg")     
 }
-Face.graphics[1] = {
+Face.graphics.meh = { 
     love.graphics.newImage("assets/1b.jpg"),
     love.graphics.newImage("assets/1c.jpg"),
-    love.graphics.newImage("assets/1d.jpg"),
-    love.graphics.newImage("assets/1e.jpg")
+    love.graphics.newImage("assets/1d.jpg"), 
+    love.graphics.newImage("assets/1e.jpg") 
 }
+Face.graphics.bad = { love.graphics.newImage("assets/images/face_sad.png") }
+Face.graphics.crap = { love.graphics.newImage("assets/images/face_horrible.png") }
 
 function Face:new()
     local instance = {};
     setmetatable(instance, self.metaTable);
     table.insert(objects.drawable, instance);
-    instance:updateFace(instance.mood)
+    instance:updateFace()
     return instance;
 end
 
@@ -50,38 +51,47 @@ function Face:draw()
     local screenCenter = {world.screen.width/2, world.screen.height/2};
     local imageCenter  = {graphic:getWidth()/2, graphic:getHeight()/2};
 
-    love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
     love.graphics.draw(graphic, screenCenter[1] - imageCenter[1], screenCenter[2] - imageCenter[2]);
 end
 
 function Face:decreaseMood()
-    local oldMood = math.floor(self.mood)
-    self.mood = self.mood - self.moodStep
-    local newMood = math.floor(self.mood)
-    if oldMood ~= newMood then
-        self:updateFace(self.mood)
-    end
-    if self.mood <= 1 then
+    self.mood = self.mood - 1
+    if self.mood == 1 then
         currentState = state.gameOver
     end
+    self:updateFace()
 end
 
 function Face:increaseMood()
-    if self.mood < 5 then
-        local oldMood = math.floor(self.mood)
-        self.mood = self.mood + self.moodStep
-        local newMood = math.floor(self.mood)
-        if oldMood ~= newMood then
-            self:updateFace(newMood)
-            playSong(newMood)
-        end
+    if self.mood < 7 then
+        self.mood = self.mood + 1
+        self:updateFace()
     end
 end
 
-function Face:updateFace(mood)
-    self.graphic = self.graphics[mood] or self.graphics[1]
+function Face:updateFace(dt)
+    if self.mood == 7 then
+      self.graphic = self.graphics.great
+    end
+    if self.mood == 6 then
+      self.graphic = self.graphics.good
+    end
+    if self.mood == 5 then
+      self.graphic = self.graphics.ok
+    end
+    if self.mood == 4 then
+      self.graphic = self.graphics.default
+    end
+    if self.mood == 3 then
+      self.graphic = self.graphics.meh
+    end
+    if self.mood == 2 then
+      self.graphic = self.graphics.bad
+    end
+    if self.mood == 1 then
+      self.graphic = self.graphics.crap
+    end
     self.frame = 0
-    playSong(mood)
 end
 
 function Face:update(dt)
