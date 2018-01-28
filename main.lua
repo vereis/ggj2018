@@ -18,6 +18,8 @@ function init(windowWidth, windowHeight)
         timeStep.total = 0
         timeStep.progress = 0
 
+    score = 0
+
     world = {};
     world.meter = 64;
     world.gravity = 11;
@@ -149,6 +151,7 @@ function step(dt)
     if currentState == state.begin then
         if love.keyboard.isDown("space") then
             currentState = state.inProgress
+            timeStep.total = 0
         end
     end
 
@@ -160,6 +163,8 @@ function step(dt)
     if currentState == state.gameOver then
         -- Do nothing; player is stuck.
     end
+
+    score = score + 1
 end
 
 function love.update(dt)
@@ -192,7 +197,11 @@ function love.draw()
         v:draw()
     end
 
+    love.graphics.setFont(font.small)
     love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
+    if currentState == state.inProgress or currentState == state.gameOver then
+        love.graphics.print("Score: " .. score)
+    end
     if currentState == state.begin then
         textCenetered("Press space to start.", font.large, 12)
     end
