@@ -56,7 +56,9 @@ function Wave:addPoint()
     point.x = world.screen.width + 100
     point.y = self:pop()
 
-    Coin:new(point.x, point.y)
+    if currentState == state.inProgress then
+        Coin:new(point.x, point.y)
+    end
 end
 
 function Wave:update(dt)

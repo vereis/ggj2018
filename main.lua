@@ -11,6 +11,13 @@ function init(windowWidth, windowHeight)
       state.inProgress = 0x02
       state.gameOver = 0x03
 
+    music = {}
+        music[1] = love.audio.newSource("assets/music/Music_Layer_1.wav", "static")
+        music[2] = love.audio.newSource("assets/music/Music_Layer_2.wav", "static")
+        music[3] = love.audio.newSource("assets/music/Music_Layer_3.wav", "static")
+        music[4] = love.audio.newSource("assets/music/Music_Layer_4.wav", "static")
+        music[5] = love.audio.newSource("assets/music/Music_Layer_5.wav", "static")
+
     currentState = state.begin
 
     timeStep = {}
@@ -121,10 +128,26 @@ function popWave()
     return curr
 end
 
+function playSong(count)
+    for i,v in ipairs(music) do
+      v:setVolume(0)
+    end
+    for i=1,count do
+        music[i]:setVolume(1)
+    end
+end
+
 function love.load()
     init(800, 600);
 
     background = love.graphics.newImage("assets/images/background.png")
+
+    for i,v in ipairs(music) do
+        v:setLooping(true)
+    end
+    for i,v in ipairs(music) do
+        v:play()
+    end
 
     font = {}
     font.large = love.graphics.newFont("assets/fonts/NanumGothic-Regular.ttf", 64)
