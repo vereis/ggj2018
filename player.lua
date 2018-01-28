@@ -8,13 +8,14 @@ Player.radius = 30;
 Player.states = {};
 Player.state = "idle";
 Player.force = -2400
+Player.offset = 140
 
-function Player:new(x, y)
+function Player:new()
     local instance = {};
     setmetatable(instance, self.metaTable);
 
-    x = x or instance.radius * 1.5
-    y = y or world.screen.height / 2
+    local x = instance.offset
+    local y = world.screen.height / 2
 
     instance.body = love.physics.newBody(world.world, x, y, "dynamic");
     instance.shape = love.physics.newCircleShape(instance.radius);
@@ -43,11 +44,19 @@ end
 
 function Player:draw()
     local x, y = self.body:getPosition();
+
+
+    love.graphics.setColor(0x00, 0x00, 0x00)
+    love.graphics.line(0, world.screen.height/2, x, y)
     love.graphics.setColor(193, 47, 14);
     love.graphics.circle("fill", x, y, self.radius);
     love.graphics.setColor(255, 255, 255);
 end
 
 function Player:update()
+    local x, y = self.body:getPosition();
+    local yPercentage = y / world.screen.height
+    self.body:setX(math.sin(yPercentage * math.pi) * self.offset)
+
     self.states[self.state]();
 end

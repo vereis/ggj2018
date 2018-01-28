@@ -4,7 +4,7 @@ Coin = {}
     Coin.metaTable.__index = Coin
 
   Coin.radius = 15
-  Coin.speed = -200
+  Coin.speed = 200
 
   Coin.colour = {0xff, 0x00, 0x00}
 
@@ -19,7 +19,7 @@ Coin = {}
       instance.fixture:setSensor(true)
       instance.fixture:setUserData(instance)
 
-      instance.body:setLinearVelocity(instance.speed, 0)
+      instance.body:setLinearVelocity(-instance.speed, 0)
 
       table.insert(objects.drawable, instance)
 
