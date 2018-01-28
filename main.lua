@@ -3,16 +3,7 @@ require("face");
 require("player")
 require("callbacks")
 require("coin")
-
-function lerp(a, b, amount)
-    local result = a + amount * (b - a)
-    return result
-end
-
-function slerp(a, b, amount)
-    local factor = (0.5 - math.cos(math.pi * amount) * 0.5);
-    return a * (1.0 - factor) + b * factor
-end
+require("wave")
 
 function init(windowWidth, windowHeight)
     state = {}
@@ -21,6 +12,11 @@ function init(windowWidth, windowHeight)
       state.gameOver = 0x03
 
     currentState = state.begin
+
+    timeStep = {}
+        timeStep.size = 0.01
+        timeStep.total = 0
+        timeStep.progress = 0
 
     world = {};
     world.meter = 64;
@@ -48,8 +44,9 @@ function init(windowWidth, windowHeight)
     objects.hazards = {};
     objects.points  = {};
     objects.drawable = {}
-    objects.player  = Player:new()
     objects.face    = Face:new()
+    objects.player  = Player:new()
+    objects.wave    = Wave:new(30, 570)
 
     objects.goal = newBlock(-20 - Coin.radius, 20, -10 - Coin.radius, world.screen.height - 20, {255,255,255}, "dynamic")
     objects.goal.body:setGravityScale(0) -- Needs to be dynamic to collide with sensors.
@@ -60,12 +57,6 @@ function init(windowWidth, windowHeight)
 
     --initial graphics setup
     love.window.setMode(world.screen.width, world.screen.height);
-
-    coinFactory = {}
-    coinFactory.coinFrequency = 1
-    coinFactory.coinDelay = 0
-
-    nextCoin = 0
 end
 
 function newBlock(x1, y1, x2, y2, color, type)
@@ -116,15 +107,13 @@ function drawWave(obj)
     end
 end
 
-function nextCoinHeight()
+function popWave()
     local curr = table.remove(wave, 1)
     if #wave == 0 then
         local amplitude = world.screen.height * 0.4
-        for j=1,10 do
-          local next = world.screen.height/2 + math.random(-amplitude, amplitude)
-          for i=1,10 do
-            table.insert(wave, slerp(wave[#wave] or curr, next, i/10))
-          end
+        local next = world.screen.height/2 + math.random(-amplitude, amplitude)
+        for i=1,10 do
+          table.insert(wave, slerp(curr, next, i/10))
         end
     end
     return curr
@@ -137,6 +126,7 @@ function love.load()
 
     font = {}
     font.large = love.graphics.newFont("assets/fonts/NanumGothic-Regular.ttf", 64)
+    font.small = love.graphics.newFont("assets/fonts/NanumGothic-Regular.ttf", 12)
     love.graphics.setFont(font.large)
 
     table.insert(objects.blocks, newBlock(world.screen.x1,
@@ -152,14 +142,9 @@ function love.load()
                                           {0x00, 0x00, 0x00}));
 end
 
-
-function love.update(dt)
-    --if nextCoin > 0.35 then
-    --  Coin:new(800, nextCoinHeight())
-    --  nextCoin = 0
-    --end
-
+function step(dt)
     objects.face:update(dt)
+    objects.wave:update(dt)
 
     if currentState == state.begin then
         if love.keyboard.isDown("space") then
@@ -168,11 +153,6 @@ function love.update(dt)
     end
 
     if currentState == state.inProgress then
-        coinFactory.coinDelay = coinFactory.coinDelay + dt
-        if coinFactory.coinDelay >= coinFactory.coinFrequency then
-            Coin:new(world.screen.width + Coin.radius, nextCoinHeight())
-            coinFactory.coinDelay = 0
-        end
         world.world:update(dt)
         objects.player:update();
     end
@@ -180,6 +160,21 @@ function love.update(dt)
     if currentState == state.gameOver then
         -- Do nothing; player is stuck.
     end
+end
+
+function love.update(dt)
+    timeStep.total = timeStep.total + dt
+    timeStep.progress = timeStep.progress + dt
+
+    while timeStep.progress >= timeStep.size do
+        timeStep.progress = timeStep.progress - timeStep.size
+        step(timeStep.size)
+    end
+
+    --if nextCoin > 0.35 then
+    --  Coin:new(800, nextCoinHeight())
+    --  nextCoin = 0
+    --end
 end
 
 function textCenetered(text, font, yOffset)
@@ -205,6 +200,6 @@ function love.draw()
         textCenetered("Game over! You lose.", font.large, 12)
     end
 
-    -- love.graphics.setColor(0x00, 0xff, 0x00, 0xff)
-    -- drawWave(wave)
+    love.graphics.setColor(0x00, 0x00, 0xaa, 0xff)
+    drawWave(objects.wave.heights)
 end
