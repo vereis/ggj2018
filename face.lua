@@ -46,6 +46,8 @@ function Face:new()
 end
 
 function Face:draw()
+
+
     local graphic = self.graphic[self.frame + 1]
     local screenCenter = {world.screen.width/2, world.screen.height/2};
     local imageCenter  = {graphic:getWidth()/2, graphic:getHeight()/2};
@@ -59,7 +61,7 @@ function Face:decreaseMood()
     self.mood = self.mood - self.moodStep
     local newMood = math.floor(self.mood)
     if oldMood ~= newMood then
-        self:updateFace(self.mood)
+        self:updateFace(newMood)
     end
     if self.mood <= 1 then
         currentState = state.gameOver
