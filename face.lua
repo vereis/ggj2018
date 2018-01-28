@@ -51,6 +51,7 @@ function Face:draw()
     local screenCenter = {world.screen.width/2, world.screen.height/2};
     local imageCenter  = {graphic:getWidth()/2, graphic:getHeight()/2};
 
+    love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
     love.graphics.draw(graphic, screenCenter[1] - imageCenter[1], screenCenter[2] - imageCenter[2]);
 end
 
