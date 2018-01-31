@@ -1,8 +1,8 @@
 Face = {};
 Face.metaTable = {};
 Face.metaTable.__index = Face;
-Face.mood = 1
-Face.moodStep = 0.2
+Face.mood = 1.5
+Face.moodStep = 0.04
 Face.time = 0
 Face.frame = 0
 Face.frameDuration = 0.33 -- In seconds.
@@ -62,7 +62,7 @@ function Face:decreaseMood()
     if oldMood ~= newMood then
         self:updateFace(newMood)
     end
-    if self.mood <= 1 then
+    if self.mood < 1 then
         currentState = state.gameOver
     end
 end

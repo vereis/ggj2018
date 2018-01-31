@@ -5,6 +5,10 @@ require("callbacks")
 require("coin")
 require("wave")
 
+function speedMultiplier(t)
+	return 1 + (t / 40) * 1
+end
+
 function init(windowWidth, windowHeight)
     state = {}
       state.begin = 0x01
@@ -20,14 +24,14 @@ function init(windowWidth, windowHeight)
 
     coin = {}
     coin.pickup = {}
-        coin.pickup[1] = love.audio.newSource("assets/music/Coin_PickUp_1.wav", "static")
-        coin.pickup[2] = love.audio.newSource("assets/music/Coin_PickUp_2.wav", "static")
-        coin.pickup[3] = love.audio.newSource("assets/music/Coin_PickUp_3.wav", "static")
-        coin.pickup[4] = love.audio.newSource("assets/music/Coin_PickUp_4.wav", "static")
+        coin.pickup[1] = { love.audio.newSource("assets/music/Coin_PickUp_1.wav", "static") }
+        coin.pickup[2] = { love.audio.newSource("assets/music/Coin_PickUp_2.wav", "static") }
+        coin.pickup[3] = { love.audio.newSource("assets/music/Coin_PickUp_3.wav", "static") }
+        coin.pickup[4] = { love.audio.newSource("assets/music/Coin_PickUp_4.wav", "static") }
     coin.miss = {}
-        coin.miss[1] = love.audio.newSource("assets/music/Coin_Miss_1.wav", "static")
-        coin.miss[2] = love.audio.newSource("assets/music/Coin_Miss_2.wav", "static")
-        coin.miss[3] = love.audio.newSource("assets/music/Coin_Miss_3.wav", "static")
+        coin.miss[1] = { love.audio.newSource("assets/music/Coin_Miss_1.wav", "static") }
+        coin.miss[2] = { love.audio.newSource("assets/music/Coin_Miss_2.wav", "static") }
+        coin.miss[3] = { love.audio.newSource("assets/music/Coin_Miss_3.wav", "static") }
 
     graphics = {}
         graphics.bar = {}
@@ -247,8 +251,10 @@ function love.draw()
         love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
         love.graphics.draw(graphics.bar[math.floor(objects.face.mood)] or graphics.bar[1], 540, 460)
         love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
-        love.graphics.print("Score: " .. score, 12, 12 * 1)
-        love.graphics.print("Mood: " .. objects.face.mood, 12, 12 * 2)
+    	love.graphics.setFont(font.large)
+        love.graphics.print("Score: " .. score, 12, 12)
+    	love.graphics.setFont(font.small)
+        love.graphics.print("Mood: " .. objects.face.mood, 12, 80)
     end
 
     if currentState == state.begin then

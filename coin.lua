@@ -24,7 +24,7 @@ Coin = {}
       instance.fixture:setUserData(instance)
       instance.apperance = instance.apperances[love.math.random(1, #instance.apperances)]
 
-      instance.body:setLinearVelocity(-instance.speed, 0)
+      instance.body:setLinearVelocity(-instance.speed * speedMultiplier(timeStep.total), 0)
 
       table.insert(objects.drawable, instance)
 
@@ -39,11 +39,11 @@ Coin = {}
   function Coin:beginContact(other)
       if other == objects.goal then
           objects.face:decreaseMood()
-          coin.miss[love.math.random(1, #coin.miss)]:play()
+          self:playSound(coin.miss)
       end
       if other == objects.player then
           objects.face:increaseMood()
-          coin.pickup[love.math.random(1, #coin.pickup)]:play()
+          self:playSound(coin.pickup)
       end
       if other == objects.player or other == objects.goal then
         self.body:destroy()
@@ -54,4 +54,21 @@ Coin = {}
             end
         end
       end
+  end
+
+  function Coin:playSound(sound)
+	local index = love.math.random(1, #sound)
+	local i
+	for key, value in ipairs(sound[index]) do
+		if not value:isPlaying() then
+			i = value	
+			break	
+		end
+	end
+	if not i then
+		i = sound[index][1]:clone()
+		table.insert(sound[index], i)
+	end
+	i:setVolume(0.5)
+	i:play()
   end
