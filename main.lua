@@ -5,8 +5,12 @@ require("callbacks")
 require("coin")
 require("wave")
 
-function speedMultiplier(t)
-	return 1 + (t / 40) * 1
+function timeMultiplier()
+	return 1 + (timeStep.total / 20) * 1
+end
+
+function score()
+	return math.floor(timeStep.total * 200)
 end
 
 function init(windowWidth, windowHeight)
@@ -49,8 +53,6 @@ function init(windowWidth, windowHeight)
         timeStep.size = 0.01
         timeStep.total = 0
         timeStep.progress = 0
-
-    score = 0
 
     world = {};
     world.meter = 64;
@@ -204,6 +206,7 @@ function step(dt)
     end
 
     if currentState == state.inProgress then
+    	timeStep.total = timeStep.total + dt
         world.world:update(dt)
         objects.player:update();
     end
@@ -211,23 +214,14 @@ function step(dt)
     if currentState == state.gameOver then
         -- Do nothing; player is stuck.
     end
-
-    score = score + 1
 end
 
 function love.update(dt)
-    timeStep.total = timeStep.total + dt
     timeStep.progress = timeStep.progress + dt
-
     while timeStep.progress >= timeStep.size do
         timeStep.progress = timeStep.progress - timeStep.size
         step(timeStep.size)
     end
-
-    --if nextCoin > 0.35 then
-    --  Coin:new(800, nextCoinHeight())
-    --  nextCoin = 0
-    --end
 end
 
 function textCenetered(text, font, yOffset)
@@ -247,12 +241,12 @@ function love.draw()
 
     love.graphics.setFont(font.small)
 
-    if currentState == state.inProgress or currentState == state.gameOver then
+    if currentState == state.inProgress then
         love.graphics.setColor(0xff, 0xff, 0xff, 0xff)
         love.graphics.draw(graphics.bar[math.floor(objects.face.mood)] or graphics.bar[1], 540, 460)
         love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
     	love.graphics.setFont(font.large)
-        love.graphics.print("Score: " .. score, 12, 12)
+        love.graphics.print("Score: " .. score(), 12, 12)
     	love.graphics.setFont(font.small)
         love.graphics.print("Mood: " .. objects.face.mood, 12, 80)
     end
@@ -263,7 +257,9 @@ function love.draw()
     end
 
     if currentState == state.gameOver then
+        love.graphics.setColor(0x00, 0x00, 0x00, 0xff)
         textCenetered("Game over! You lose.", font.large, 12)
+        love.graphics.print("Score: " .. score(), 12, 100)
     end
 
     -- love.graphics.setColor(0x00, 0x00, 0xaa, 0xff)

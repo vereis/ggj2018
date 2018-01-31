@@ -24,7 +24,7 @@ Coin = {}
       instance.fixture:setUserData(instance)
       instance.apperance = instance.apperances[love.math.random(1, #instance.apperances)]
 
-      instance.body:setLinearVelocity(-instance.speed * speedMultiplier(timeStep.total), 0)
+      instance.body:setLinearVelocity(-instance.speed * timeMultiplier(), 0)
 
       table.insert(objects.drawable, instance)
 

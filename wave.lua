@@ -62,7 +62,7 @@ function Wave:addPoint()
 end
 
 function Wave:update(dt)
-    self.timer.progress = self.timer.progress + dt * speedMultiplier(timeStep.total)
+    self.timer.progress = self.timer.progress + dt * timeMultiplier()
     while self.timer.progress > self.timer.interval do
         self.timer.progress = self.timer.progress - self.timer.interval
         self.timer.count = self.timer.count + 1
