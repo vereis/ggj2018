@@ -20,22 +20,22 @@ function init(windowWidth, windowHeight)
       state.gameOver = 0x03
 
     music = {}
-        music[1] = love.audio.newSource("assets/music/Music_Layer_1.wav", "static")
-        music[2] = love.audio.newSource("assets/music/Music_Layer_2.wav", "static")
-        music[3] = love.audio.newSource("assets/music/Music_Layer_3.wav", "static")
-        music[4] = love.audio.newSource("assets/music/Music_Layer_4.wav", "static")
-        music[5] = love.audio.newSource("assets/music/Music_Layer_5.wav", "static")
+        music[1] = love.audio.newSource("assets/music/Music_Layer_1.ogg", "static")
+        music[2] = love.audio.newSource("assets/music/Music_Layer_2.ogg", "static")
+        music[3] = love.audio.newSource("assets/music/Music_Layer_3.ogg", "static")
+        music[4] = love.audio.newSource("assets/music/Music_Layer_4.ogg", "static")
+        music[5] = love.audio.newSource("assets/music/Music_Layer_5.ogg", "static")
 
     coin = {}
     coin.pickup = {}
-        coin.pickup[1] = { love.audio.newSource("assets/music/Coin_PickUp_1.wav", "static") }
-        coin.pickup[2] = { love.audio.newSource("assets/music/Coin_PickUp_2.wav", "static") }
-        coin.pickup[3] = { love.audio.newSource("assets/music/Coin_PickUp_3.wav", "static") }
-        coin.pickup[4] = { love.audio.newSource("assets/music/Coin_PickUp_4.wav", "static") }
+        coin.pickup[1] = { love.audio.newSource("assets/music/Coin_PickUp_1.ogg", "static") }
+        coin.pickup[2] = { love.audio.newSource("assets/music/Coin_PickUp_2.ogg", "static") }
+        coin.pickup[3] = { love.audio.newSource("assets/music/Coin_PickUp_3.ogg", "static") }
+        coin.pickup[4] = { love.audio.newSource("assets/music/Coin_PickUp_4.ogg", "static") }
     coin.miss = {}
-        coin.miss[1] = { love.audio.newSource("assets/music/Coin_Miss_1.wav", "static") }
-        coin.miss[2] = { love.audio.newSource("assets/music/Coin_Miss_2.wav", "static") }
-        coin.miss[3] = { love.audio.newSource("assets/music/Coin_Miss_3.wav", "static") }
+        coin.miss[1] = { love.audio.newSource("assets/music/Coin_Miss_1.ogg", "static") }
+        coin.miss[2] = { love.audio.newSource("assets/music/Coin_Miss_2.ogg", "static") }
+        coin.miss[3] = { love.audio.newSource("assets/music/Coin_Miss_3.ogg", "static") }
 
     graphics = {}
         graphics.bar = {}
@@ -157,10 +157,11 @@ end
 
 function playSong(count)
     for i,v in ipairs(music) do
-      v:setVolume(0)
-    end
-    for i=1,count do
-        music[i]:setVolume(1)
+      if i == count then
+      	v:setVolume(1)
+      else
+      	v:setVolume(0)
+      end
     end
 end
 

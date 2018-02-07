@@ -41,7 +41,7 @@ function Face:new()
     local instance = {};
     setmetatable(instance, self.metaTable);
     table.insert(objects.drawable, instance);
-    instance:updateFace(instance.mood)
+    instance:updateFace(math.floor(instance.mood))
     return instance;
 end
 
@@ -74,7 +74,6 @@ function Face:increaseMood()
         local newMood = math.floor(self.mood)
         if oldMood ~= newMood then
             self:updateFace(newMood)
-            playSong(newMood)
         end
     end
 end
